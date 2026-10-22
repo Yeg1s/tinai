@@ -21,6 +21,7 @@ export type SttProvider =
   | 'glm-asr'
   | 'openai-whisper'
   | 'groq-whisper'
+  | 'gemini'
   | 'siliconflow'
   | 'apple-speech'
   | 'custom-whisper'

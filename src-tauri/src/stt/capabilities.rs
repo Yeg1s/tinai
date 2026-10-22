@@ -188,6 +188,15 @@ fn static_provider_capability(provider_id: &str) -> SttRecordingCapability {
             RecordingLimitSource::ClientBuffer,
             "recordingLimits.reasons.clientBuffer",
         ),
+        super::gemini::GEMINI_STT_PROVIDER => capability(
+            provider_id,
+            SttTransport::FileUpload,
+            300,
+            420,
+            Some(super::gemini::MAX_AUDIO_BYTES as u64),
+            RecordingLimitSource::Provider,
+            "recordingLimits.reasons.providerDuration",
+        ),
         "custom-whisper" => capability(
             provider_id,
             SttTransport::FileUpload,

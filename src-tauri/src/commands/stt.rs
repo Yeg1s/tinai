@@ -206,6 +206,10 @@ fn build_remote_stt_diagnostics(
     } else {
         match provider {
             "deepgram" => (Some("https://api.deepgram.com/v1/listen".to_string()), None),
+            stt::gemini::GEMINI_STT_PROVIDER => (
+                Some(stt::gemini::generate_content_endpoint()),
+                Some(stt::gemini::GEMINI_STT_MODEL.to_string()),
+            ),
             "assemblyai" => (
                 Some("https://api.assemblyai.com/v2/transcript".to_string()),
                 None,
@@ -337,6 +341,7 @@ fn build_stt_provider_diagnostics(
         }
         "deepgram"
         | "assemblyai"
+        | stt::gemini::GEMINI_STT_PROVIDER
         | stt::volcengine::VOLCENGINE_DOUBAO_PROVIDER
         | stt::aliyun_qwen3_asr::ALIYUN_QWEN3_ASR_PROVIDER => {
             build_remote_stt_diagnostics(provider, api_key, provider_region)
@@ -491,6 +496,9 @@ pub async fn test_stt_connection(
             Ok(stt::apple_speech::apple_speech_availability(None).ready)
         }
         "openai-whisper" => Ok(check_openai_whisper_model(&client, &api_key).await.is_ok()),
+        stt::gemini::GEMINI_STT_PROVIDER => Ok(stt::gemini::check_connection(&client, &api_key)
+            .await
+            .is_ok()),
         _ => {
             let cfg = resolve_whisper_test_config(&provider, custom_base_url, custom_model)?;
 
@@ -821,6 +829,11 @@ pub async fn bench_stt_connection(
         "openai-whisper" => {
             let t0 = std::time::Instant::now();
             check_openai_whisper_model(&client, &api_key).await?;
+            Ok(t0.elapsed().as_millis() as u32)
+        }
+        stt::gemini::GEMINI_STT_PROVIDER => {
+            let t0 = std::time::Instant::now();
+            stt::gemini::check_connection(&client, &api_key).await?;
             Ok(t0.elapsed().as_millis() as u32)
         }
         _ => {

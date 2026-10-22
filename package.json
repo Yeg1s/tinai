@@ -1,5 +1,5 @@
 {
-  "name": "opentypeless",
+  "name": "tinai",
   "private": true,
   "version": "1.1.64",
   "type": "module",
@@ -14,13 +14,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tover0314-w/opentypeless"
+    "url": "https://github.com/Yeg1s/tinai"
   },
-  "homepage": "https://www.opentypeless.com",
+  "homepage": "https://github.com/Yeg1s/tinai",
   "bugs": {
-    "url": "https://github.com/tover0314-w/opentypeless/issues"
+    "url": "https://github.com/Yeg1s/tinai/issues"
   },
-  "author": "OpenTypeless Contributors",
+  "author": "tinai Contributors",
   "license": "MIT",
   "scripts": {
     "dev": "vite",

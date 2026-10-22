@@ -3004,6 +3004,9 @@ impl PipelineHandle {
                 false,
             )),
             "deepgram" => Some(("https://api.deepgram.com/v1/listen".to_string(), false)),
+            stt::gemini::GEMINI_STT_PROVIDER => {
+                Some((stt::gemini::generate_content_endpoint(), false))
+            }
             "assemblyai" => Some((
                 "https://api.assemblyai.com/v2/transcript".to_string(),
                 false,

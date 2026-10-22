@@ -5,6 +5,7 @@ pub mod capabilities;
 pub mod cloud;
 pub mod config;
 pub mod deepgram;
+pub mod gemini;
 pub mod managed_audio;
 pub mod volcengine;
 pub mod whisper_compat;
@@ -86,6 +87,10 @@ pub fn create_provider(
         }
         "assemblyai" => Ok(Box::new(assemblyai::AssemblyAiProvider::new())),
         "deepgram" => Ok(Box::new(deepgram::DeepgramProvider::new())),
+        gemini::GEMINI_STT_PROVIDER => Ok(match client {
+            Some(ref c) => Box::new(gemini::GeminiSttProvider::with_client(c.clone())),
+            None => Box::new(gemini::GeminiSttProvider::new()),
+        }),
         aliyun_qwen3_asr::ALIYUN_QWEN3_ASR_PROVIDER => {
             Ok(Box::new(aliyun_qwen3_asr::AliyunQwen3AsrProvider::new()))
         }
@@ -155,6 +160,12 @@ mod tests {
     fn creates_apple_speech_builtin_local_provider() {
         let provider = create_provider("apple-speech", None, None).unwrap();
         assert_eq!(provider.name(), "Apple Speech");
+    }
+
+    #[test]
+    fn creates_gemini_provider() {
+        let provider = create_provider("gemini", None, None).unwrap();
+        assert_eq!(provider.name(), "gemini");
     }
 
     #[test]

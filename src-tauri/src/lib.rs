@@ -219,7 +219,7 @@ fn build_ask_window(handle: &tauri::AppHandle) -> tauri::Result<tauri::WebviewWi
         "ask",
         tauri::WebviewUrl::App("index.html#ask".into()),
     )
-    .title("OpenTypeless Ask")
+    .title("tinai Ask")
     .inner_size(400.0, 220.0)
     .min_inner_size(360.0, 180.0)
     .resizable(false)
@@ -843,7 +843,7 @@ pub fn run() {
     tracing_subscriber::fmt()
         .with_env_filter(
             EnvFilter::from_default_env().add_directive(
-                "opentypeless=debug"
+                "tinai=debug"
                     .parse()
                     .expect("static directive is valid"),
             ),
@@ -999,7 +999,7 @@ pub fn run() {
                         .clone(),
                 )
                 .menu(&tray_menu)
-                .tooltip("OpenTypeless")
+                .tooltip("tinai")
                 .on_menu_event(move |app, event| match event.id.as_ref() {
                     "quit" => {
                         app.exit(0);
@@ -1148,7 +1148,7 @@ pub fn run() {
                 }
             }
 
-            tracing::info!("OpenTypeless started");
+            tracing::info!("tinai started");
 
             // P1-2: Pre-warm HTTP connection pool in background
             let warm_handle = app_handle.clone();

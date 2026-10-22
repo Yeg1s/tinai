@@ -7,6 +7,7 @@ pub fn finalize_timeout(provider: &str, streaming_timeout: Duration) -> Duration
     if provider == "cloud" {
         crate::cloud_request::STT_MAX_TIMEOUT + Duration::from_secs(15)
     } else if provider == crate::stt::config::CUSTOM_WHISPER_PROVIDER
+        || provider == crate::stt::gemini::GEMINI_STT_PROVIDER
         || crate::stt::config::get_whisper_config(provider).is_some()
     {
         crate::stt::whisper_compat::FINALIZE_TIMEOUT
@@ -85,7 +86,7 @@ mod tests {
 
     #[tokio::test(start_paused = true)]
     async fn file_upload_ask_does_not_stop_after_twelve_seconds() {
-        for provider in ["groq-whisper", "openai-whisper", "custom-whisper"] {
+        for provider in ["groq-whisper", "openai-whisper", "custom-whisper", "gemini"] {
             let done = Arc::new(Notify::new());
             let worker_done = done.clone();
             let worker = tokio::spawn(async move {
