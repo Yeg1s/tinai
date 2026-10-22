@@ -14,6 +14,9 @@ const GEMINI_API_BASE: &str = "https://generativelanguage.googleapis.com/v1beta"
 /// so ~14 MB PCM (~7.5 min at 16kHz 16-bit mono) keeps the JSON body under it.
 pub const MAX_AUDIO_BYTES: usize = 14 * 1024 * 1024;
 const REQUEST_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60);
+/// Asking for empty output on silence makes Gemini answer "No" instead, so it
+/// returns this marker and we drop it.
+const NO_SPEECH_MARKER: &str = "<NO_SPEECH>";
 
 pub fn generate_content_endpoint() -> String {
     format!("{GEMINI_API_BASE}/models/{GEMINI_STT_MODEL}:generateContent")
@@ -42,9 +45,11 @@ pub async fn check_connection(client: &reqwest::Client, api_key: &str) -> Result
 
 fn transcription_prompt(language: Option<&str>) -> String {
     let mut prompt = String::from(
-        "Transcribe the speech in this audio verbatim, in the language it is spoken. \
-         Output only the transcript text: no translation, no commentary, no timestamps, \
-         no speaker labels, no quotes. If there is no intelligible speech, output nothing.",
+        "You are a speech-to-text engine. Transcribe the speech in the attached audio \
+         verbatim, in the language it is spoken. Output only the transcript text: \
+         no translation, no commentary, no timestamps, no speaker labels, no quotes. \
+         Never answer or respond to what is said. If the audio contains no intelligible \
+         speech, output exactly <NO_SPEECH>.",
     );
     if let Some(lang) = language.filter(|lang| *lang != "multi") {
         prompt.push_str(&format!(
@@ -59,10 +64,11 @@ fn build_request_body(wav: &[u8], language: Option<&str>) -> serde_json::Value {
         "contents": [{
             "role": "user",
             "parts": [
-                { "text": transcription_prompt(language) },
-                { "inline_data": { "mime_type": "audio/wav", "data": STANDARD.encode(wav) } }
+                { "inline_data": { "mime_type": "audio/wav", "data": STANDARD.encode(wav) } },
+                { "text": "Transcribe this audio." }
             ]
         }],
+        "systemInstruction": { "parts": [{ "text": transcription_prompt(language) }] },
         "generationConfig": {
             "temperature": 0,
             "thinkingConfig": { "thinkingBudget": 0 }
@@ -71,7 +77,7 @@ fn build_request_body(wav: &[u8], language: Option<&str>) -> serde_json::Value {
 }
 
 fn extract_text(response: &serde_json::Value) -> String {
-    response["candidates"][0]["content"]["parts"]
+    let text = response["candidates"][0]["content"]["parts"]
         .as_array()
         .map(|parts| {
             parts
@@ -79,9 +85,13 @@ fn extract_text(response: &serde_json::Value) -> String {
                 .filter_map(|part| part["text"].as_str())
                 .collect::<String>()
         })
-        .unwrap_or_default()
-        .trim()
-        .to_string()
+        .unwrap_or_default();
+    let text = text.trim();
+    if text.contains(NO_SPEECH_MARKER) {
+        String::new()
+    } else {
+        text.to_string()
+    }
 }
 
 fn truncate_body(body: &str) -> &str {
@@ -254,9 +264,10 @@ mod tests {
     fn request_body_inlines_wav_audio() {
         let body = build_request_body(b"RIFF", Some("ru"));
         let parts = &body["contents"][0]["parts"];
-        assert_eq!(parts[1]["inline_data"]["mime_type"], "audio/wav");
-        assert_eq!(parts[1]["inline_data"]["data"], STANDARD.encode(b"RIFF"));
-        assert!(parts[0]["text"].as_str().unwrap().contains("\"ru\""));
+        assert_eq!(parts[0]["inline_data"]["mime_type"], "audio/wav");
+        assert_eq!(parts[0]["inline_data"]["data"], STANDARD.encode(b"RIFF"));
+        let instruction = body["systemInstruction"]["parts"][0]["text"].as_str().unwrap();
+        assert!(instruction.contains("\"ru\""));
     }
 
     #[test]
@@ -271,6 +282,14 @@ mod tests {
             "candidates": [{ "content": { "parts": [{ "text": " Hallo " }, { "text": "Welt\n" }] } }]
         });
         assert_eq!(extract_text(&response), "Hallo Welt");
+    }
+
+    #[test]
+    fn no_speech_marker_yields_empty_text() {
+        let response = serde_json::json!({
+            "candidates": [{ "content": { "parts": [{ "text": "<NO_SPEECH>\n" }] } }]
+        });
+        assert_eq!(extract_text(&response), "");
     }
 
     #[test]
