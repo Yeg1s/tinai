@@ -285,6 +285,7 @@
     "dictationHotkey": "Start dictation",
     "askHotkey": "Ask shortcut",
     "translateHotkey": "Translate shortcut",
+    "translateTextHotkey": "Translate typed text",
     "shortcutAdd": "Add shortcut",
     "shortcutRemove": "Remove shortcut",
     "shortcutManage": "Manage shortcut",

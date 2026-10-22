@@ -285,6 +285,7 @@
     "dictationHotkey": "开始听写",
     "askHotkey": "语音提问",
     "translateHotkey": "翻译快捷键",
+    "translateTextHotkey": "Translate typed text",
     "shortcutAdd": "添加快捷键",
     "shortcutRemove": "移除快捷键",
     "shortcutManage": "管理快捷键",

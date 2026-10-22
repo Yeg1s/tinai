@@ -284,6 +284,7 @@
     "dictationHotkey": "Dictée",
     "askHotkey": "Ask Anything",
     "translateHotkey": "Raccourci de traduction",
+    "translateTextHotkey": "Translate typed text",
     "shortcutAdd": "Ajouter un raccourci",
     "shortcutRemove": "Supprimer le raccourci",
     "shortcutManage": "Gérer le raccourci",

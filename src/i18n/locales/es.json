@@ -284,6 +284,7 @@
     "dictationHotkey": "Dictado",
     "askHotkey": "Ask Anything",
     "translateHotkey": "Atajo de traducción",
+    "translateTextHotkey": "Translate typed text",
     "shortcutAdd": "Añadir atajo",
     "shortcutRemove": "Eliminar atajo",
     "shortcutManage": "Gestionar atajo",

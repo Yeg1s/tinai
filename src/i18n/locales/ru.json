@@ -284,6 +284,7 @@
     "dictationHotkey": "Диктовка",
     "askHotkey": "Ask Anything",
     "translateHotkey": "Сочетание для перевода",
+    "translateTextHotkey": "Перевод набранного текста",
     "shortcutAdd": "Добавить сочетание",
     "shortcutRemove": "Удалить сочетание",
     "shortcutManage": "Управление сочетанием",

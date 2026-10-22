@@ -251,6 +251,7 @@ export type HotkeyRole =
   | 'editSelection'
   | 'switchScene'
   | 'openApp'
+  | 'translateText'
 
 export interface HotkeyStatusError {
   code: string

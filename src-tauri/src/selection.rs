@@ -49,18 +49,53 @@ fn copy_selected_text_to_clipboard() -> bool {
     }
 }
 
+/// Letter keys for Ctrl shortcuts. On Windows `Key::Unicode` resolves through the
+/// active keyboard layout, so Ctrl+C becomes plain text input under e.g. a Russian
+/// layout; virtual-key variants hit the physical key regardless of layout.
+#[cfg(target_os = "windows")]
+const COPY_KEY: Key = Key::C;
+#[cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
+const COPY_KEY: Key = Key::Unicode('c');
+#[cfg(target_os = "windows")]
+const SELECT_ALL_KEY: Key = Key::A;
+#[cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
+const SELECT_ALL_KEY: Key = Key::Unicode('a');
+
 #[cfg(not(target_os = "macos"))]
-fn copy_selected_text_to_clipboard() -> bool {
+fn send_ctrl_shortcut(key: Key) -> bool {
     let Ok(mut enigo) = Enigo::new(&EnigoSettings::default()) else {
         return false;
     };
 
     let pressed = enigo.key(Key::Control, Direction::Press).is_ok();
     if pressed {
-        let _ = enigo.key(Key::Unicode('c'), Direction::Click);
+        let _ = enigo.key(key, Direction::Click);
         let _ = enigo.key(Key::Control, Direction::Release);
     }
     pressed
+}
+
+#[cfg(not(target_os = "macos"))]
+fn copy_selected_text_to_clipboard() -> bool {
+    send_ctrl_shortcut(COPY_KEY)
+}
+
+/// Select everything in the focused input (Ctrl+A / Cmd+A).
+#[cfg(not(target_os = "macos"))]
+pub fn select_all_in_focused_field() -> bool {
+    send_ctrl_shortcut(SELECT_ALL_KEY)
+}
+
+#[cfg(target_os = "macos")]
+pub fn select_all_in_focused_field() -> bool {
+    std::process::Command::new("/usr/bin/osascript")
+        .args([
+            "-e",
+            r#"tell application "System Events" to keystroke "a" using command down"#,
+        ])
+        .status()
+        .map(|status| status.success())
+        .unwrap_or(false)
 }
 
 pub fn capture_selected_text() -> Option<String> {

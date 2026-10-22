@@ -136,6 +136,8 @@ pub struct HotkeyConfig {
     pub edit_selection: Option<ShortcutBinding>,
     pub switch_scene: Option<ShortcutBinding>,
     pub open_app: Option<ShortcutBinding>,
+    /// Translate typed/selected text in place, without voice.
+    pub translate_text: Option<ShortcutBinding>,
     pub dictation_mode: String,
 }
 
@@ -148,6 +150,8 @@ impl Default for HotkeyConfig {
         );
         config.translate = default_translate_hotkey().and_then(ShortcutBinding::from_hotkey);
         config.translate_bindings = config.translate.clone().into_iter().collect();
+        config.translate_text =
+            default_translate_text_hotkey().and_then(ShortcutBinding::from_hotkey);
         config
     }
 }
@@ -174,6 +178,7 @@ impl HotkeyConfig {
             edit_selection: None,
             switch_scene: None,
             open_app: None,
+            translate_text: None,
             dictation_mode,
         }
     }
@@ -217,6 +222,7 @@ impl HotkeyConfig {
         normalize_optional_binding(&mut self.edit_selection);
         normalize_optional_binding(&mut self.switch_scene);
         normalize_optional_binding(&mut self.open_app);
+        normalize_optional_binding(&mut self.translate_text);
         self.dictation_mode = normalize_hotkey_mode(&self.dictation_mode).to_string();
     }
 }
@@ -760,6 +766,17 @@ fn default_translate_hotkey() -> Option<&'static str> {
     #[cfg(not(target_os = "macos"))]
     {
         Some("Ctrl+Shift+/")
+    }
+}
+
+fn default_translate_text_hotkey() -> Option<&'static str> {
+    #[cfg(target_os = "macos")]
+    {
+        Some("Command+Shift+.")
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        Some("Ctrl+Shift+.")
     }
 }
 

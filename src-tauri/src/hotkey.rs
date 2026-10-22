@@ -245,6 +245,7 @@ pub enum HotkeyRole {
     EditSelection,
     SwitchScene,
     OpenApp,
+    TranslateText,
 }
 
 impl HotkeyRole {
@@ -256,6 +257,7 @@ impl HotkeyRole {
             Self::EditSelection => "editSelection",
             Self::SwitchScene => "switchScene",
             Self::OpenApp => "openApp",
+            Self::TranslateText => "translateText",
         }
     }
 }
@@ -519,6 +521,12 @@ pub(crate) fn hotkey_registration_plan_from_config_for_platform(
         config.open_app.as_ref(),
         platform,
     )?;
+    push_optional_registered_hotkey(
+        &mut plan,
+        HotkeyRole::TranslateText,
+        config.translate_text.as_ref(),
+        platform,
+    )?;
 
     Ok(plan)
 }
@@ -630,6 +638,7 @@ pub fn validate_hotkey_pair(
         edit_selection: None,
         switch_scene: None,
         open_app: None,
+        translate_text: None,
         dictation_mode: "hold".to_string(),
     };
 
@@ -965,6 +974,11 @@ pub fn handle_hotkey_role_event(
             );
             handle_recording_shortcut(handle, action);
         }
+        HotkeyRole::TranslateText => {
+            if event_state == ShortcutState::Pressed {
+                crate::quick_translate::spawn(handle);
+            }
+        }
         role => handle_advanced_role_shortcut(handle, role, event_state),
     }
 }
@@ -1228,6 +1242,7 @@ mod tests {
             edit_selection: None,
             switch_scene: None,
             open_app: None,
+            translate_text: None,
             dictation_mode: "toggle".to_string(),
         };
 
@@ -1258,6 +1273,7 @@ mod tests {
             edit_selection: None,
             switch_scene: None,
             open_app: None,
+            translate_text: None,
             dictation_mode: "toggle".to_string(),
         };
 
@@ -1298,6 +1314,7 @@ mod tests {
             edit_selection: None,
             switch_scene: None,
             open_app: None,
+            translate_text: None,
             dictation_mode: "toggle".to_string(),
         };
 

@@ -284,6 +284,7 @@
     "dictationHotkey": "받아쓰기",
     "askHotkey": "Ask Anything",
     "translateHotkey": "번역 단축키",
+    "translateTextHotkey": "Translate typed text",
     "shortcutAdd": "단축키 추가",
     "shortcutRemove": "단축키 삭제",
     "shortcutManage": "단축키 관리",

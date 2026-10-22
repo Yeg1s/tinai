@@ -110,10 +110,12 @@ export function GeneralPane() {
     config.hotkeys.switchScene,
     config.hotkeys.openApp,
   ].filter((binding): binding is ShortcutBinding => Boolean(binding))
-  const otherBindingsFor = (role: 'dictation' | 'ask' | 'translate') => [
+  const translateTextBindings = config.hotkeys.translateText ? [config.hotkeys.translateText] : []
+  const otherBindingsFor = (role: 'dictation' | 'ask' | 'translate' | 'translateText') => [
     ...(role === 'dictation' ? [] : dictationBindings),
     ...(role === 'ask' ? [] : askBindings),
     ...(role === 'translate' ? [] : translateBindings),
+    ...(role === 'translateText' ? [] : translateTextBindings),
     ...secondaryBindings,
   ]
   const updateCoreBindings = (
@@ -176,6 +178,19 @@ export function GeneralPane() {
             required={false}
             specialOptions={translateSpecialOptions}
             onChange={(bindings) => updateCoreBindings('translate', bindings)}
+          />
+          <ShortcutBindingList
+            role="translateText"
+            label={t('settings.translateTextHotkey')}
+            bindings={translateTextBindings}
+            otherBindings={otherBindingsFor('translateText')}
+            required={false}
+            specialOptions={[]}
+            onChange={(bindings) =>
+              updateConfig({
+                hotkeys: { ...config.hotkeys, translateText: bindings[bindings.length - 1] ?? null },
+              })
+            }
           />
         </div>
         {platformCapabilities && !platformCapabilities.globalHotkeyReliable && (

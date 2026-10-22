@@ -306,15 +306,8 @@ fn legacy_context_summary(app_type: AppType) -> ContextProfileSummary {
     }
 }
 
-fn translation_instruction(
-    translate_enabled: bool,
-    target_lang: &str,
-    has_selected_text: bool,
-) -> Option<String> {
-    if !translate_enabled || target_lang.trim().is_empty() {
-        return None;
-    }
-
+/// Human-readable name for a translation target code, e.g. "de" -> "German (Deutsch)".
+pub fn target_language_name(target_lang: &str) -> Option<&str> {
     let lang_name = match target_lang.trim() {
         "en" => "English",
         "zh" => "Chinese (中文)",
@@ -345,6 +338,19 @@ fn translation_instruction(
             }
         }
     };
+    Some(lang_name)
+}
+
+fn translation_instruction(
+    translate_enabled: bool,
+    target_lang: &str,
+    has_selected_text: bool,
+) -> Option<String> {
+    if !translate_enabled || target_lang.trim().is_empty() {
+        return None;
+    }
+
+    let lang_name = target_language_name(target_lang)?;
 
     if has_selected_text {
         Some(format!(

@@ -226,9 +226,14 @@ fn simulate_paste(_shortcut: PasteShortcut) -> Result<(), AppError> {
 #[cfg(not(target_os = "macos"))]
 fn paste_keys(shortcut: PasteShortcut) -> (Vec<enigo::Key>, enigo::Key) {
     use enigo::Key;
+    // Virtual-key V on Windows so the shortcut survives non-Latin keyboard layouts.
+    #[cfg(target_os = "windows")]
+    let v = Key::V;
+    #[cfg(not(target_os = "windows"))]
+    let v = Key::Unicode('v');
     match shortcut {
-        PasteShortcut::CtrlV => (vec![Key::Control], Key::Unicode('v')),
-        PasteShortcut::CtrlShiftV => (vec![Key::Control, Key::Shift], Key::Unicode('v')),
+        PasteShortcut::CtrlV => (vec![Key::Control], v),
+        PasteShortcut::CtrlShiftV => (vec![Key::Control, Key::Shift], v),
         PasteShortcut::ShiftInsert => (vec![Key::Shift], Key::Insert),
     }
 }

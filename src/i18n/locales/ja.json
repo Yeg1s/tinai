@@ -284,6 +284,7 @@
     "dictationHotkey": "ディクテーション",
     "askHotkey": "Ask Anything",
     "translateHotkey": "翻訳ショートカット",
+    "translateTextHotkey": "Translate typed text",
     "shortcutAdd": "ショートカットを追加",
     "shortcutRemove": "ショートカットを削除",
     "shortcutManage": "ショートカットを管理",

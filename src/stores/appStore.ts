@@ -86,6 +86,7 @@ export interface HotkeyConfig {
   editSelection: ShortcutBinding | null
   switchScene: ShortcutBinding | null
   openApp: ShortcutBinding | null
+  translateText: ShortcutBinding | null
   dictationMode: HotkeyMode
 }
 
@@ -378,6 +379,11 @@ function defaultTranslateHotkey(): string | null {
   return 'Ctrl+Shift+/'
 }
 
+function defaultTranslateTextHotkey(): string {
+  if (isMacPlatform()) return 'Command+Shift+.'
+  return 'Ctrl+Shift+.'
+}
+
 const modifierOrder = ['Fn', 'RightAlt', 'Command', 'Super', 'Ctrl', 'Option', 'Alt', 'Shift']
 
 function normalizeModifier(value: string): string | null {
@@ -563,6 +569,10 @@ function normalizeHotkeyConfig(config: AppConfig, hotkeysValue: HotkeyConfig): H
     editSelection: normalizeBinding(hotkeys.editSelection),
     switchScene: normalizeBinding(hotkeys.switchScene),
     openApp: normalizeBinding(hotkeys.openApp),
+    translateText:
+      hotkeys.translateText === undefined
+        ? bindingFromHotkey(defaultTranslateTextHotkey())
+        : normalizeBinding(hotkeys.translateText),
     dictationMode:
       hotkeys.dictationMode === 'toggle'
         ? 'toggle'
@@ -599,6 +609,10 @@ function hotkeyConfigFromLegacy(config: AppConfig): HotkeyConfig {
     editSelection: config.hotkeys?.editSelection ?? null,
     switchScene: config.hotkeys?.switchScene ?? null,
     openApp: config.hotkeys?.openApp ?? null,
+    translateText:
+      config.hotkeys?.translateText === undefined
+        ? bindingFromHotkey(defaultTranslateTextHotkey())
+        : config.hotkeys.translateText,
     dictationMode:
       config.hotkey_mode === 'toggle'
         ? 'toggle'
@@ -768,6 +782,7 @@ const defaultConfig: AppConfig = {
     editSelection: null,
     switchScene: null,
     openApp: null,
+    translateText: bindingFromHotkey(defaultTranslateTextHotkey()),
     dictationMode: defaultDictationHotkeyMode(),
   },
   output_mode: 'keyboard',

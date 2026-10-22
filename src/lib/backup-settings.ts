@@ -157,6 +157,7 @@ export function createBackupSettings(config: AppConfig): BackupSettings {
           editSelection: safeBinding(config.hotkeys.editSelection),
           switchScene: safeBinding(config.hotkeys.switchScene),
           openApp: safeBinding(config.hotkeys.openApp),
+          translateText: safeBinding(config.hotkeys.translateText),
           dictationMode: config.hotkeys.dictationMode,
         }
       : undefined,

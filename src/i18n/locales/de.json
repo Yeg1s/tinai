@@ -284,6 +284,7 @@
     "dictationHotkey": "Diktat",
     "askHotkey": "Ask Anything",
     "translateHotkey": "Übersetzungs-Tastenkombination",
+    "translateTextHotkey": "Getippten Text übersetzen",
     "shortcutAdd": "Tastenkombination hinzufügen",
     "shortcutRemove": "Tastenkombination entfernen",
     "shortcutManage": "Kurzbefehl verwalten",
