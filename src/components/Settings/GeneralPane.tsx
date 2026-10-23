@@ -188,7 +188,10 @@ export function GeneralPane() {
             specialOptions={[]}
             onChange={(bindings) =>
               updateConfig({
-                hotkeys: { ...config.hotkeys, translateText: bindings[bindings.length - 1] ?? null },
+                hotkeys: {
+                  ...config.hotkeys,
+                  translateText: bindings[bindings.length - 1] ?? null,
+                },
               })
             }
           />

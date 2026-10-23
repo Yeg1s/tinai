@@ -20,7 +20,9 @@ export const APP_REPO_URL = 'https://github.com/Yeg1s/tinai'
 export const APP_LICENSE_URL = 'https://github.com/Yeg1s/tinai/blob/main/LICENSE'
 // Cloud API base URL — defaults to www.opentypeless.com but can be overridden via VITE_API_BASE_URL env var.
 // All core features (BYOK mode) work without any cloud connection.
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://www.opentypeless.com'
+// tinai: the upstream cloud is disabled. `.invalid` never resolves (RFC 2606), so any
+// leftover cloud call fails locally instead of reaching the upstream author's server.
+export const API_BASE_URL = 'https://cloud.disabled.invalid'
 
 export const FREE_PLAN = {
   sttMinutes: 15,
@@ -119,7 +121,6 @@ export const STT_PROVIDERS: { value: string; labelKey: string }[] = [
   { value: 'siliconflow', labelKey: 'providers.stt.siliconflow' },
   { value: APPLE_SPEECH_PROVIDER, labelKey: 'providers.stt.appleSpeech' },
   { value: CUSTOM_WHISPER_PROVIDER, labelKey: 'providers.stt.customWhisper' },
-  { value: 'cloud', labelKey: 'providers.stt.cloud' },
 ] as const
 
 export const VOLCENGINE_STT_RESOURCES = [
@@ -153,7 +154,6 @@ export const LLM_PROVIDERS: { value: string; labelKey: string }[] = [
   { value: 'claude', labelKey: 'providers.llm.claude' },
   { value: 'ollama', labelKey: 'providers.llm.ollama' },
   { value: 'openrouter', labelKey: 'providers.llm.openrouter' },
-  { value: 'cloud', labelKey: 'providers.llm.cloud' },
 ] as const
 
 export const ONBOARDING_LLM_PROVIDERS = LLM_PROVIDERS.filter(
@@ -167,7 +167,7 @@ export const LLM_DEFAULT_CONFIG: Record<string, { baseUrl: string; model: string
   openai: { baseUrl: 'https://api.openai.com/v1', model: 'gpt-4o-mini' },
   gemini: {
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-flash',
   },
   moonshot: { baseUrl: 'https://api.moonshot.cn/v1', model: 'moonshot-v1-8k' },
   doubao: {

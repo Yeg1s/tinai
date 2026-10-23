@@ -736,7 +736,7 @@ function syncHotkeyConfig(previous: AppConfig, partial: Partial<AppConfig>): App
 }
 
 const defaultConfig: AppConfig = {
-  stt_provider: 'glm-asr',
+  stt_provider: 'gemini',
   stt_api_key: '',
   stt_custom_api_key: '',
   stt_custom_preset: 'speaches',
@@ -745,10 +745,10 @@ const defaultConfig: AppConfig = {
   stt_volcengine_resource_id: 'volc.seedasr.sauc.duration',
   stt_aliyun_qwen_region: 'china-mainland',
   stt_language: 'multi',
-  llm_provider: 'openrouter',
+  llm_provider: 'gemini',
   llm_api_key: '',
-  llm_model: 'google/gemini-2.5-flash',
-  llm_base_url: 'https://openrouter.ai/api/v1',
+  llm_model: 'gemini-2.5-flash',
+  llm_base_url: 'https://generativelanguage.googleapis.com/v1beta/openai',
   polish_enabled: true,
   context_adaptation_enabled: true,
   voice_routing_flags: {

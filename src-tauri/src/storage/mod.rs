@@ -390,7 +390,7 @@ pub struct AppConfig {
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
-            stt_provider: "glm-asr".to_string(),
+            stt_provider: "gemini".to_string(),
             stt_api_key: String::new(),
             stt_custom_api_key: String::new(),
             stt_language: "multi".to_string(),
@@ -401,10 +401,10 @@ impl Default for AppConfig {
                 .to_string(),
             stt_aliyun_qwen_region:
                 crate::stt::aliyun_qwen3_asr::ALIYUN_QWEN3_ASR_REGION_CHINA_MAINLAND.to_string(),
-            llm_provider: "openrouter".to_string(),
+            llm_provider: "gemini".to_string(),
             llm_api_key: String::new(),
-            llm_model: "google/gemini-2.5-flash".to_string(),
-            llm_base_url: "https://openrouter.ai/api/v1".to_string(),
+            llm_model: "gemini-2.5-flash".to_string(),
+            llm_base_url: "https://generativelanguage.googleapis.com/v1beta/openai".to_string(),
             polish_enabled: true,
             context_adaptation_enabled: true,
             voice_routing_flags: crate::voice_intent::VoiceRoutingFlags::default(),

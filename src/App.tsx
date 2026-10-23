@@ -3,7 +3,6 @@ import i18n from './i18n'
 import { useTauriEvents } from './hooks/useTauriEvents'
 import { useTheme } from './hooks/useTheme'
 import { useAppStore } from './stores/appStore'
-import { useAuthStore } from './stores/authStore'
 import { useRoute } from './lib/router'
 import {
   loadOnboardingCompleted,
@@ -15,20 +14,14 @@ import {
   getPlatformCapabilities,
   getHotkeyRegistrationError,
 } from './lib/tauri'
-import { initDeepLinkListener } from './lib/deep-link'
-import { readPendingDesktopCheckout } from './lib/desktop-checkout-intent'
-import { shouldRefreshSubscriptionOnFocus } from './lib/subscription-refresh-policy'
 import { Capsule } from './components/Capsule'
 import { Settings } from './components/Settings'
 import { History } from './components/History'
 import { Onboarding } from './components/Onboarding'
 import { MainLayout } from './components/MainLayout'
 import { HomePage } from './components/HomePage'
-import { UpgradePage } from './components/UpgradePage'
-import { AccountPage } from './components/AccountPage'
 import { AskPanel } from './components/AskPanel'
 import { ToastContainer } from './components/Toast'
-import { UpdatePrompt } from './components/UpdatePrompt'
 
 function CapsuleApp() {
   useTauriEvents()
@@ -100,7 +93,7 @@ function MainApp() {
   const setHotkeyRegistrationError = useAppStore((s) => s.setHotkeyRegistrationError)
   const [loaded, setLoaded] = useState(false)
   const [loadError, setLoadError] = useState(false)
-  const { route, navigate } = useRoute()
+  const { route } = useRoute()
 
   useEffect(() => {
     loadOnboardingCompleted().then(async (done) => {
@@ -147,12 +140,6 @@ function MainApp() {
       }
       setLoaded(true)
     })
-
-    // Initialize auth session (non-blocking)
-    useAuthStore.getState().initialize()
-
-    // Initialize deep-link listener
-    initDeepLinkListener()
   }, [
     setOnboardingCompleted,
     setConfig,
@@ -164,38 +151,6 @@ function MainApp() {
     setPlatformCapabilities,
     setHotkeyRegistrationError,
   ])
-
-  const user = useAuthStore((s) => s.user)
-  const authLoading = useAuthStore((s) => s.loading)
-
-  useEffect(() => {
-    if (!loaded || authLoading || !user || route !== 'account') return
-    if (readPendingDesktopCheckout(localStorage)) navigate('upgrade')
-  }, [authLoading, loaded, navigate, route, user])
-
-  // Subscription changes are event-driven. Focus refresh is reserved for a pending checkout.
-  useEffect(() => {
-    if (!loaded || !user) return
-
-    let refreshInFlight = false
-    const refreshPendingCheckout = () => {
-      const { checkoutPending } = useAuthStore.getState()
-      if (!shouldRefreshSubscriptionOnFocus(checkoutPending) || refreshInFlight) return
-      refreshInFlight = true
-      void useAuthStore
-        .getState()
-        .refreshSubscription()
-        .finally(() => {
-          refreshInFlight = false
-        })
-    }
-
-    window.addEventListener('focus', refreshPendingCheckout)
-
-    return () => {
-      window.removeEventListener('focus', refreshPendingCheckout)
-    }
-  }, [loaded, user])
 
   if (!loaded)
     return (
@@ -222,9 +177,6 @@ function MainApp() {
       {route === 'home' && <HomePage />}
       {route === 'settings' && <Settings />}
       {route === 'history' && <History />}
-      {route === 'upgrade' && <UpgradePage />}
-      {route === 'account' && <AccountPage />}
-      <UpdatePrompt />
       <ToastContainer />
     </MainLayout>
   )

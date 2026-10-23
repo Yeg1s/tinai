@@ -595,6 +595,7 @@ mod tests {
     #[test]
     fn prepare_config_clamps_custom_intent_only_when_settings_are_saved() {
         let config = storage::AppConfig {
+            stt_provider: "glm-asr".to_string(),
             recording_limit_mode: crate::stt::capabilities::RecordingLimitMode::Custom,
             custom_recording_limit_seconds: 9_999,
             ..storage::AppConfig::default()

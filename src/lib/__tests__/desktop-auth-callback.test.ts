@@ -24,7 +24,7 @@ describe('createDesktopAuthCallbackURL', () => {
 
   it('registers PKCE and keeps only state in the email verification callback', async () => {
     await expect(createDesktopAuthCallbackURL()).resolves.toBe(
-      'https://www.opentypeless.com/auth/callback?desktop=11111111-1111-4111-8111-111111111111',
+      'https://cloud.disabled.invalid/auth/callback?desktop=11111111-1111-4111-8111-111111111111',
     )
     const [, request] = fetchMock.mock.calls[0]
     const body = JSON.parse(request.body)
@@ -38,23 +38,23 @@ describe('createDesktopAuthCallbackURL', () => {
 
   it('adds the selected UI language without exposing proof material', async () => {
     await expect(createDesktopAuthCallbackURL(undefined, 'zh-CN')).resolves.toBe(
-      'https://www.opentypeless.com/auth/callback?desktop=11111111-1111-4111-8111-111111111111&locale=zh',
+      'https://cloud.disabled.invalid/auth/callback?desktop=11111111-1111-4111-8111-111111111111&locale=zh',
     )
   })
 
   it('opens signup and verification on the Turnstile-protected web page', async () => {
     await expect(createDesktopWebAuthURL('signup', undefined, 'zh-CN')).resolves.toBe(
-      'https://www.opentypeless.com/zh/login?tab=signup&desktop=11111111-1111-4111-8111-111111111111',
+      'https://cloud.disabled.invalid/zh/login?tab=signup&desktop=11111111-1111-4111-8111-111111111111',
     )
     clearOAuthState()
     await expect(createDesktopWebAuthURL('verify', undefined, 'en')).resolves.toBe(
-      'https://www.opentypeless.com/en/login?mode=verify&desktop=11111111-1111-4111-8111-111111111111',
+      'https://cloud.disabled.invalid/en/login?mode=verify&desktop=11111111-1111-4111-8111-111111111111',
     )
   })
 
   it('opens password reset without consuming a desktop handoff row', async () => {
     await expect(createDesktopWebAuthURL('forgot', undefined, 'invalid-locale')).resolves.toBe(
-      'https://www.opentypeless.com/en/login?mode=forgot',
+      'https://cloud.disabled.invalid/en/login?mode=forgot',
     )
     expect(fetchMock).not.toHaveBeenCalled()
   })
@@ -63,7 +63,7 @@ describe('createDesktopAuthCallbackURL', () => {
     clearOAuthState()
 
     await expect(claimDesktopAuthCallbackURL()).resolves.toBe(
-      'https://www.opentypeless.com/auth/callback?desktop=11111111-1111-4111-8111-111111111111',
+      'https://cloud.disabled.invalid/auth/callback?desktop=11111111-1111-4111-8111-111111111111',
     )
     await expect(claimDesktopAuthCallbackURL()).resolves.toBeNull()
     expect(fetchMock).toHaveBeenCalledTimes(1)

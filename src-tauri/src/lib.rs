@@ -34,7 +34,9 @@ use tracing_subscriber::EnvFilter;
 use std::sync::{Arc, Mutex};
 
 /// Default cloud API base URL. Override with the `API_BASE_URL` environment variable.
-pub const DEFAULT_API_BASE_URL: &str = "https://www.opentypeless.com";
+/// tinai: the upstream cloud is disabled. `.invalid` never resolves (RFC 2606), so any
+/// leftover cloud call fails locally instead of reaching the upstream author's server.
+pub const DEFAULT_API_BASE_URL: &str = "https://cloud.disabled.invalid";
 pub const CLIENT_VERSION_HEADER: &str = "X-OpenTypeless-Version";
 const HTTP_POOL_IDLE_TIMEOUT_SECS: u64 = 10 * 60;
 const HTTP_TCP_KEEPALIVE_SECS: u64 = 60;
@@ -49,9 +51,9 @@ fn build_shared_http_client() -> reqwest::Client {
         .expect("Failed to create HTTP client")
 }
 
-/// Read the cloud API base URL from the environment, falling back to the compiled default.
+/// Cloud API base URL. Not overridable: tinai never talks to a cloud backend.
 pub fn api_base_url() -> String {
-    std::env::var("API_BASE_URL").unwrap_or_else(|_| DEFAULT_API_BASE_URL.to_string())
+    DEFAULT_API_BASE_URL.to_string()
 }
 
 pub fn desktop_client_version() -> &'static str {
@@ -882,7 +884,6 @@ pub fn run() {
             None,
         ))
         .plugin(tauri_plugin_process::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
             if let Some(action) = parse_cli_action(&args) {

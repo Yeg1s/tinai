@@ -83,6 +83,13 @@ export function Onboarding() {
 
   const handleNext = async () => {
     if (step < TOTAL_STEPS - 1) {
+      // tinai has no cloud account: go straight from Welcome to provider setup.
+      if (step === 0) {
+        setOnboardingMode('byok')
+        setStep(3)
+        return
+      }
+
       // Cloud mode: set providers BEFORE saving, then skip STT/LLM setup
       if (step === 2 && onboardingMode === 'cloud') {
         updateConfig({ stt_provider: 'cloud', llm_provider: 'cloud' })
@@ -129,9 +136,9 @@ export function Onboarding() {
         return
       }
 
-      // If coming back from STT setup and user skipped login, go back to Account (step 1)
-      if (step === 3 && !user) {
-        setStep(1)
+      // Sign-in and mode steps are skipped, so STT setup returns to Welcome.
+      if (step === 3) {
+        setStep(0)
         return
       }
 
